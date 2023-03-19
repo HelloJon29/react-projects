@@ -72,6 +72,7 @@ body {
 }
 
 .board-row:after {
+  /*Note: After selecter in css is used to render ui elements after all other elements, in this case it will create a row, then called again to make another row underneath */
   clear: both;
   content: "";
   display: table;
