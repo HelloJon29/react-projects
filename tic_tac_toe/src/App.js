@@ -11,7 +11,7 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-export default function Board() {
+function Board() {
   const [xIsNext, setXisNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null)); // Lifting the state up, as in the Parent will now remember the state and let the children know through props, NOTE: State is private to the function that defines it
 
@@ -61,6 +61,21 @@ export default function Board() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function Game() {
+  const [xIsNext, setXisNext] = useState(true);
+  const [history, setHistroy] = useState([Array(9).fill(null)]);
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board />
+      </div>
+      <div className="game-info">
+        <ol>{/*TODO */}</ol>
+      </div>
+    </div>
   );
 }
 
