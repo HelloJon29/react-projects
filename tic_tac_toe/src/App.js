@@ -11,14 +11,12 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-function Board() {
-  const [xIsNext, setXisNext] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(null)); // Lifting the state up, as in the Parent will now remember the state and let the children know through props, NOTE: State is private to the function that defines it
-
+function Board({ xIsNext, squares, onPlay }) {
+  // Now using passed down props from Game component to update the Board here
   function handleClick(i) {
     if (squares[i] || calculateWinner(squares)) {
       // check the array at the i-th element for a value and stop
-      // Updated: now check for winner using new helper method and stop
+      // Updated: now check for winner using new helper function and stop
       return;
     }
     const nextSquares = squares.slice(); // using of squares which is from the outer function Board, this is called closure where an inner function has acces to outer function's variables
@@ -27,8 +25,7 @@ function Board() {
     } else {
       nextSquares[i] = "O";
     }
-    setSquares(nextSquares);
-    setXisNext(!xIsNext);
+    onPlay(nextSquares); // function called from Game component which uses the new handlePlay function
   }
 
   const winner = calculateWinner(squares);
@@ -67,10 +64,17 @@ function Board() {
 export default function Game() {
   const [xIsNext, setXisNext] = useState(true);
   const [history, setHistroy] = useState([Array(9).fill(null)]);
+  const currentSquares = history[history.length - 1];
+
+  function handlePlay(nextSquares) {
+    setHistroy([...history, nextSquares]); // moved logic from the handleClick function in Board to here as this will now be called in the Board component and use these props there.
+    setXisNext(!xIsNext);
+  }
+
   return (
     <div className="game">
       <div className="game-board">
-        <Board />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
         <ol>{/*TODO */}</ol>
