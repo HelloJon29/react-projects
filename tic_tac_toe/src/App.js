@@ -64,12 +64,36 @@ function Board({ xIsNext, squares, onPlay }) {
 export default function Game() {
   const [xIsNext, setXisNext] = useState(true);
   const [history, setHistroy] = useState([Array(9).fill(null)]);
-  const currentSquares = history[history.length - 1];
+  const [currentMove, setCurrentMove] = useState(0);
+  const currentSquares = history[currentMove];
 
   function handlePlay(nextSquares) {
-    setHistroy([...history, nextSquares]); // moved logic from the handleClick function in Board to here as this will now be called in the Board component and use these props there.
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares]; // moved logic from the handleClick function in Board to here as this will now be called in the Board component and use these props there.
+    setHistroy(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
     setXisNext(!xIsNext);
   }
+
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove);
+    setXisNext(nextMove % 2 === 0); // if nextMove is even set this flag to true
+  }
+
+  const moves = history.map((squares, move) => {
+    let description;
+
+    if (move > 0) {
+      description = "Go to move #" + move;
+    } else {
+      description = "Go to game start";
+    }
+    return (
+      // Important! React requires a key for lists to help differeniate data between siblings. Without it react will create and destroy new components instead of using current ones
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
 
   return (
     <div className="game">
@@ -77,7 +101,7 @@ export default function Game() {
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{/*TODO */}</ol>
+        <ol>{moves}</ol>
       </div>
     </div>
   );
